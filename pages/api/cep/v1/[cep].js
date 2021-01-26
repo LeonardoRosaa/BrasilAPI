@@ -1,5 +1,5 @@
-import microCors from 'micro-cors';
 import cep from 'cep-promise';
+import app from '../../../../app';
 
 // max-age especifica quanto tempo o browser deve manter o valor em cache, em segundos.
 // s-maxage é uma header lida pelo servidor proxy (neste caso, Vercel).
@@ -19,7 +19,6 @@ import cep from 'cep-promise';
 //    stale/out-of-date cache caso alterássemos a implementação da API.
 const CACHE_CONTROL_HEADER_VALUE =
   'max-age=0, s-maxage=86400, stale-while-revalidate, public';
-const cors = microCors();
 
 async function Cep(request, response) {
   const requestedCep = request.query.cep;
@@ -28,7 +27,7 @@ async function Cep(request, response) {
 
   console.log({
     url: request.url,
-    clientIp: clientIp,
+    clientIp,
   });
 
   response.setHeader('Cache-Control', CACHE_CONTROL_HEADER_VALUE);
@@ -51,8 +50,7 @@ async function Cep(request, response) {
           break;
       }
 
-      response.json(error);
-      return;
+      throw error;
     }
 
     response.status(500);
@@ -60,4 +58,4 @@ async function Cep(request, response) {
   }
 }
 
-export default cors(Cep);
+export default app().get(Cep);
