@@ -9,11 +9,17 @@ async function cnpjData(request, response) {
   response.setHeader('Cache-Control', CACHE_CONTROL_HEADER_VALUE);
   try {
     const result = await getCnpjData(request.query.cnpj);
-    response.status(result.status);
-    response.json(result.data);
+
+    if (result.valid) {
+      response.status(200);
+    } else {
+      response.status(400);
+    }
+
+    response.json(result);
   } catch (error) {
     response.status(500);
-    response.json(error.response.data);
+    response.json(error);
   }
 }
 

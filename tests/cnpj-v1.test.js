@@ -8,7 +8,7 @@ describe('api/cnpj/v1 (E2E)', () => {
     const { data, status } = response;
 
     expect(status).toEqual(200);
-    expect(data.razao_social).toEqual('OPEN KNOWLEDGE BRASIL');
+    expect(data.data.razao_social).toEqual('OPEN KNOWLEDGE BRASIL');
   });
 
   test('Utilizando um CNPJ inexistente: 00000000000000', async () => {
@@ -18,9 +18,9 @@ describe('api/cnpj/v1 (E2E)', () => {
       const { response } = error;
       const { data, status } = response;
 
-      expect(status).toEqual(500);
+      expect(status).toEqual(400);
       expect(data).toEqual({
-        message: 'CNPJ 00.000.000/0000-00 não encontrado.',
+        valid: false,
       });
     }
   });
